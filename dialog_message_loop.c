@@ -21,10 +21,6 @@ int CALLBACK WinMain(
   __in  int nCmdShow
 ) {
 
-  CreateDialog ( hInstance, ID_DLG, NULL, dlgproc );
-  // mb_error ( GetLastError (), TEXT("CreateDialog") );
-
-  // under normal termination return wParam from main window's WM_QUIT
-  return 0;
+  return DialogBoxParam ( GetModuleHandle(NULL), ID_DLG, NULL, dlgproc, NULL );
 }
 

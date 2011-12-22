@@ -4,16 +4,20 @@
 
 // ID_DLG is #defined in dialog.h
 // control ids should also be defined there
-ID_DLG DIALOG  10, 10, 300, 110
-STYLE WS_POPUP | WS_BORDER | WS_VISIBLE
+ID_DLG DIALOG  10, 10, 200, 110
+STYLE WS_OVERLAPPED | WS_CAPTION | WS_VISIBLE | WS_SYSMENU | WS_MINIMIZEBOX
 FONT 10, "Tahoma"
-CAPTION "Error!" 
+CAPTION "Twitch" 
 {
-  /*
-    CTEXT "Select One:", 1, 10, 10, 280, 12
-    PUSHBUTTON "&Retry", 2, 75, 30, 60, 12
-    PUSHBUTTON "&Abort", 3, 75, 50, 60, 12
-    PUSHBUTTON "&Ignore", 4, 75, 80, 60, 12
-    */
+  LTEXT "Left twitch (px):", 1, 1, 1, 65, 10
+  LTEXT "Right twitch (px):", 1, 1, 11, 65, 10
+  LTEXT "Twitch interval (s):", 1, 1, 21, 65, 10
+
+  EDITTEXT IDE_LEFT, 66, 0, 30, 10
+  EDITTEXT IDE_RIGHT, 66, 10, 30, 10
+  EDITTEXT IDE_INTERVAL, 66, 20, 30, 10
+
+  PUSHBUTTON "", IDB_STARTSTOP, 10, 35, 75, 10
+  PUSHBUTTON "Test twitch", IDB_TEST, 10, 47, 75, 10
 }
 
