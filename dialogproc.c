@@ -74,9 +74,9 @@ void move_mouse ( LONG dx ) {
 }
 
 void do_twitch ( Global * g ) {
-  move_mouse ( g->left_twitch_px );
+  move_mouse ( -g->left_twitch_px );
   Sleep(50); // called from a timer callback, should we really be sleeping here?
-  move_mouse ( -g->right_twitch_px );
+  move_mouse ( g->right_twitch_px );
 }
 
 void EnableItems ( HWND hwnd, DWORD f ) {
