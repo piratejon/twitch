@@ -6,7 +6,7 @@
 
 #define TEST_TIMER_ID 999
 #define REAL_TIMER_ID 123
-#define TEST_TIMER_INTERVAL 200
+#define TEST_TIMER_INTERVAL 100
 
 typedef struct _tag_global {
   int started;
@@ -40,8 +40,20 @@ void state_to_controls ( HWND dlg, Global * g ) {
   }
 }
 
-void toggle_startstop ( Global * g ) {
-  g->started = !g->started;
+// sets the global state based on the control values
+void controls_to_state ( HWND dlg, Global * g ) {
+  TCHAR buf[10]; // ridiculous
+
+  GetDlgItemText(dlg, IDE_LEFT, buf, 10);
+  g->left_twitch_px = atoi(buf);
+
+  GetDlgItemText(dlg, IDE_RIGHT, buf, 10);
+  g->right_twitch_px = atoi(buf);
+
+  GetDlgItemText(dlg, IDE_INTERVAL, buf, 10);
+  g->interval_s = atoi(buf);
+
+  // we ought to know startstop already
 }
 
 void move_mouse ( LONG dx ) {
@@ -54,7 +66,7 @@ void move_mouse ( LONG dx ) {
   mi->dx = dx;
   mi->dy = 0;
   mi->mouseData = 0;
-  mi->dwFlags = 0;
+  mi->dwFlags = MOUSEEVENTF_MOVE;
   mi->time = 0;
   mi->dwExtraInfo = 0;
 
@@ -65,6 +77,12 @@ void do_twitch ( Global * g ) {
   move_mouse ( g->left_twitch_px );
   Sleep(50); // called from a timer callback, should we really be sleeping here?
   move_mouse ( -g->right_twitch_px );
+}
+
+void EnableItems ( HWND hwnd, DWORD f ) {
+  EnableWindow(GetDlgItem(hwnd, IDE_LEFT), f);
+  EnableWindow(GetDlgItem(hwnd, IDE_RIGHT), f);
+  EnableWindow(GetDlgItem(hwnd, IDE_INTERVAL), f);
 }
 
 /**
@@ -83,17 +101,37 @@ VOID CALLBACK timerproc(
     if ( -- G.test_counter <= 0 ) {
       KillTimer ( hwnd, TEST_TIMER_ID );
       EnableWindow ( GetDlgItem(hwnd, IDB_TEST), TRUE );
+      EnableItems ( hwnd, !G.started );
     }
   } else if ( REAL_TIMER_ID == idEvent ) {
     do_twitch ( &G );
   } else {
-    // this should never happen!
+    // this should never happen! no messagebox because we don't know how often it shouldn't be happening
+  }
+}
+
+void toggle_startstop ( HWND hwnd, Global * g ) {
+  g->started = !g->started;
+
+  if ( g->started ) {
+    if ( g->interval_s ) {
+      EnableItems ( hwnd, FALSE );
+      g->real_timer = SetTimer ( hwnd, REAL_TIMER_ID, g->interval_s * 1000, timerproc );
+    } else {
+      MessageBox ( hwnd, "Require non-zero interval", "Whoops", MB_OK ); 
+      g->started = FALSE;
+    }
+  } else {
+    KillTimer ( hwnd, g->real_timer );
+    g->real_timer = 0;
+    EnableItems ( hwnd, TRUE );
   }
 }
 
 void test_twitch ( HWND hwnd, Global * g ) {
   EnableWindow(GetDlgItem(hwnd, IDB_TEST), FALSE);
-  g->test_counter = 10; // how many iterations to test
+  EnableItems(hwnd, FALSE);
+  g->test_counter = 15; // how many iterations to test
   g->test_timer = SetTimer ( hwnd, TEST_TIMER_ID, TEST_TIMER_INTERVAL, timerproc );
 }
 
@@ -123,7 +161,7 @@ INT_PTR CALLBACK dlgproc(
 
       // set initial values in the global state
       G.started = FALSE;
-      G.left_twitch_px = 1;
+      G.left_twitch_px = 2;
       G.right_twitch_px = 3;
       G.interval_s = 99;
 
@@ -136,11 +174,13 @@ INT_PTR CALLBACK dlgproc(
       switch (LOWORD(wParam)) {
 
         case IDB_STARTSTOP:
-          toggle_startstop(&G);
+          controls_to_state(hwndDlg, &G);
+          toggle_startstop(hwndDlg, &G);
           state_to_controls(hwndDlg, &G);
           break;
 
         case IDB_TEST:
+          controls_to_state(hwndDlg, &G);
           test_twitch(hwndDlg, &G);
           break;
       }
