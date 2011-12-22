@@ -1,0 +1,7 @@
+#ifndef _BOILERPLATE_DIALOG_H
+#define _BOILERPLATE_DIALOG_H
+
+#define ID_DLG 99
+
+#endif // _BOILERPLATE_DIALOG_H
+

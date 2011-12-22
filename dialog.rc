@@ -1,0 +1,19 @@
+#include <windows.h>
+
+#include "dialog.h"
+
+// ID_DLG is #defined in dialog.h
+// control ids should also be defined there
+ID_DLG DIALOG  10, 10, 300, 110
+STYLE WS_POPUP | WS_BORDER | WS_VISIBLE
+FONT 10, "Tahoma"
+CAPTION "Error!" 
+{
+  /*
+    CTEXT "Select One:", 1, 10, 10, 280, 12
+    PUSHBUTTON "&Retry", 2, 75, 30, 60, 12
+    PUSHBUTTON "&Abort", 3, 75, 50, 60, 12
+    PUSHBUTTON "&Ignore", 4, 75, 80, 60, 12
+    */
+}
+
