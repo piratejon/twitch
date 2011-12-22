@@ -1,0 +1,13 @@
+Description:
+Twitches the mouse cursor back and forth a configurable number of pixels at a configurable interval using SendInput() and SetTimer(). Meant to help keep the computer alive when it might be overtaken by a well-meaning screensaver, rogue power management settings, or otherwise succumb to abject feelings of despair and neglect. 
+
+Tested on:
+  * XP Pro SP3 32-bit
+
+Features to be added:
+  * minimize to the system tray
+  * store the last-configured values in the registry for instant recall across runs
+  * keep a fun counter of twitches this session
+  
+Errata:
+Somehow, moving over one pixel and back one pixel does not always get you back in the same place (which seems strange, I don't know how it works), so the test mechanism is provided which performs 15 iterations of the configured left-right twitch at a 100ms interval to quickly demonstrate the cursor's tendency so that the left-right offsets can be adjusted since it would probably drive most people crazy to find their cursor drifting to the side of the screen.
